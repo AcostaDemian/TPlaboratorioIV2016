@@ -1,0 +1,81 @@
+	<div class="container">
+		<div class="page-header">
+			<center> <h1> Listado de usuarios</h1>   </center>     
+		</div>
+
+		<table class="table table-striped table-bordered" style="color:black;background-color:#f44336">
+			<tr style="background-color:#f44336">
+			    <th>NOMBRE</th>
+			    <th>EMAIL</th>
+			    <th>NIVEL</th> 
+			    <th ng-if="acceso.enc">ESTADO</th>
+			    <th>OPCIONES</th>
+			</tr>
+			<tr ng-repeat="usuario in usuarios | usuarioF" style="text-align:center;">
+
+				<td> {{usuario.nombre}} </td>
+				<td> {{usuario.email}} </td>
+				<td> {{usuario.nivel}} </td>
+				<td ng-if="acceso.enc"> {{usuario.estado}} </td>
+				<td> <button class="btn btn-danger" style="width: 250px;" ng-click="eliminarUsu(usuario.idUsuario)"> Borrar </button>
+				<button class="btn btn-warning" style="width: 250px;" ng-click="$parent.usuarioForm = usuario;$parent.tituloForm = 'Modificar' "> 
+				Modificar </button> </td>
+
+			</tr>			 
+			    
+		</table>
+
+			<div class="page-header">
+			<center> <h1> {{tituloForm}}</h1>   </center>     
+			</div>
+
+
+				<form name="formAlta" class="tablas" enctype="multipart/form-data" style="background:#f44336;color:black">
+			  	<div class="row" style="text-align:center;">
+
+				<div class="row">
+
+				<span> Nombre </span>
+				<input type="text" name="nombre" ng-model="usuarioForm.nombre" required/>
+				</div>
+
+				<div class="row">
+				<span> Email </span>
+				<input type="text" name="email" ng-model="usuarioForm.email" required> 
+				</div>
+
+				<div class="row">
+				<span> Password </span>
+				<input type="password" name="password" ng-model="usuarioForm.password" required> 
+				</div>
+
+				<div class="row">
+				<span> Reingrese password </span>
+				<input type="password" name="copiaPassword" ng-model="copiaPassword" required> 
+				</div>
+
+				<div class="row">
+				<span> Nivel </span>
+				<select name="nivel" ng-model="usuarioForm.nivel" selected="cliente" required>
+					<option value="cliente">Cliente</option>
+					<option ng-if="acceso.enc" value="empleado">Empleado </option>
+					<option ng-if="acceso.admin" value="encargado">Encargado</option>
+					<option ng-if="acceso.admin" value="administrador">Administrador</option>
+				</select>
+				</div>
+
+				<div class="row" ng-if="acceso.enc">
+				<span> Estado </span>
+				<select name="estado" ng-model="usuarioForm.estado" required>
+					<option value="habilitado">Habilitado</option>
+					<option value="bloqueado">Bloqueado</option>
+				</select>
+				</div>
+				
+				<button class="btn btn-warning" name="guardar" ng-disabled="formAlta.$invalid || usuarioForm.password != copiaPassword" 
+				ng-click="altaMod(usuarioForm)" ><span class="glyphicon glyphicon-save">&nbsp;</span>cargar usuario!</button>
+					
+			</div>
+			</div>
+
+			</form>

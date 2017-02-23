@@ -1,0 +1,244 @@
+
+	<div class="container">
+		<div class="page-header">
+			<center> <h1> Pedidos</h1>   </center>
+
+	<button onclick="$('#pedT').tableExport({type:'pdf',pdfFontSize:'9',escape:'false'});"> PDF!</button>
+
+		<table style="color:black" id="pedT" ng-repeat="pedido in pedidos| pedidoF" class="table table-striped table-bordered">
+			<th ng-if="acceso.emp" style="background-color:#f44336;border-color:#f44336">
+			Cliente {{pedido.nombre}}</th>
+			<tr class="success" style="background-color:#f44336">
+			    <th>PRODUCTO/OFERTA</th>
+			    <th>PRECIO UNIDAD</th> 
+			    <th>CANTIDAD</th>
+			    <th>TOTAL</th>
+			</tr>
+			<tr class="success" style="background-color:#f44336" ng-repeat="producto in pedido.productos">
+
+				<td> {{producto.nombre}} </td>
+				<td> ${{producto.precio}} </td>
+				<td> {{producto.cantidad}} </td>
+				<td> ${{producto.precio * producto.cantidad}} </td>
+			</tr>
+			<tr class="success" style="background-color:#f44336" ng-repeat="oferta in pedido.ofertas">
+
+				<td> {{oferta.nombre}} </td>
+				<td> ${{oferta.precio}} </td>
+				<td> {{oferta.cantidad}} </td>
+				<td> ${{oferta.precio * oferta.cantidad}} </td>
+			</tr>
+			<tr class="warning" style="background-color:#f44336">
+				<th>FECHA</th>
+				<th>ESTADO</th>
+				<th>OPCIONES</th>
+				<th>TOTAL PEDIDO</th>
+			</tr>
+			<tr class="warning">
+				<td>{{pedido.fecha | date:'dd/MM/yyyy'}}</td>
+				<td>{{pedido.estado}}</td>
+				<td><p>
+				<button class="btn btn-danger" style="width: 250px;" ng-click="eliminarPed(pedido.idPedido)">Eliminar</button><p>
+				<button class="btn btn-warning" style="width: 250px;" ng-click="$parent.pedidoForm = pedido;$parent.tituloForm = 'Modificar' ">Modificar</button><p>
+				<button class="btn btn-warning" style="width: 250px;" ng-click="cambiarEstado(pedido)" >cambiar estado</button>
+				</td>
+				<td>${{pedido.total}}</td>
+			</tr>		    
+		</table>
+
+		<div>
+
+			<div class="page-header">
+				<center> <h1> {{tituloForm}}</h1>     
+			</div>
+
+
+			<form name="pedidoF" class="tablas" enctype="multipart/form-data" style="background:#f44336;color:black">
+
+				<div class="row" ng-if="acceso.emp">
+				<span>Cliente</span>
+				<select  ng-model="pedidoForm.idCliente" ng-options="cliente as cliente.nombre for cliente in clientes | clienteF track by cliente.idUsuario" required>
+				</select>
+				</div>
+
+				<div class="row">
+				<span> Fecha de pedido </span>
+				<input type="date" min="{{date.min}}" max="{{date.max}}" datebinding ng-model="pedidoForm.fecha" required>
+				</div>
+
+				<div class="row">
+				<span>Productos</span>
+				<select ng-model="pedidoForm.productos" ng-options="producto as producto.nombre for producto in productos track by producto.nombre" ng-required="!pedidoForm.ofertas" multiple></select>
+				</div>
+
+				<div class="row">
+				<span>Ofertas</span>
+				<select ng-model="pedidoForm.ofertas"
+				ng-options="oferta as oferta.nombre for oferta in ofertas track by oferta.nombre" 
+				multiple ng-required="!pedidoForm.productos"></select>
+				</div>
+
+				<div class="row">
+
+				<span>Listado pedido</span>
+
+				<ul class="list-group">
+
+				<span>Productos</span>
+    			  <ul class="list-group">
+    				<li class="list-group-item" ng-repeat="producto in pedidoForm.productos">
+    				{{producto.nombre}}  
+    				<input type="number" min="1" numericbinding required ng-change="calcularTotal(pedidoForm)" ng-model="pedidoForm.productos[$index].cantidad">
+    				</li>
+  				  </ul>
+
+  				<span>Ofertas</span>
+  				  <ul class="list-group">
+    				<li class="list-group-item" ng-repeat="oferta in pedidoForm.ofertas">
+    				{{oferta.nombre}}  
+    				<input type="number" min="1" numericbinding ng-change="calcularTotal(pedidoForm)" ng-model="pedidoForm.ofertas[$index].cantidad" required>
+    				</li>
+  				  </ul>
+  				</ul>
+
+				</div>
+
+				<div class="row">
+					<span>TOTAL</span>
+					${{pedidoForm.total}}
+				</div>
+
+				<div class="row">
+				<span></span>
+				<button ng-if="!acceso.emp && pedidoForm.idPedido == null" class="btn btn-warning" data-toggle="modal" data-target="#myModal" name="guardar"
+				ng-click="altaMod(pedidoForm)" ng-disabled="pedidoF.$invalid">
+				<span class="glyphicon glyphicon-save">&nbsp;</span>realizar pedido!</button>
+
+				<button ng-if="acceso.emp || (!acceso.emp && pedidoForm.idPedido != null)" class="btn btn-warning" name="guardar"
+				ng-click="altaMod(pedidoForm)" ng-disabled="pedidoF.$invalid">
+				<span class="glyphicon glyphicon-save">&nbsp;</span>realizar pedido!</button>
+				</div>
+
+				</div>
+			</div>
+			</form>
+
+							
+			</center> 
+		</div>
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog" style="color:black"> 
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" style="background:#f44336">
+      <div class="modal-header"  style="background:#F9A825">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Encuesta de satisfacción</h4>
+      </div>
+      <div class="modal-body">
+
+		<form name="encForm" class="form-horizontal">
+		<fieldset>
+		<!-- Multiple Radios (inline) -->
+		<div class="form-group">
+		  <label class="col-md-4 control-label" for="radios">¿Como calificaria el servicio del local?</label>
+		  <div class="col-md-4">
+		  <div class="radio">
+		    <label for="radios-0">
+		      <input type="radio" ng-model="encuestaForm.cs" value="1" required>
+		      Mala
+		    </label>
+		  </div>
+		  <div class="radio">
+		    <label for="radios-1">
+		      <input type="radio" ng-model="encuestaForm.cs" value="2" required>
+		      Regular
+		    </label>
+			</div>
+		  <div class="radio">
+		    <label for="radios-0">
+		      <input type="radio"  ng-model="encuestaForm.cs" value="3" required >
+		      Bueno
+		    </label>
+		    <div class="radio">
+		      <label for="radios-0">
+		        <input type="radio" ng-model="encuestaForm.cs" value="4" required>
+		        Muy bueno
+		      </label>
+		  	</div>
+		  	<div class="radio">
+		  	    <label for="radios-0">
+		  	      <input type="radio" ng-model="encuestaForm.cs" value="5" required>
+		  	     Excelente
+		  	    </label>
+		  	</div>
+			</div>
+		  </div>
+		</div>
+
+		<!-- Productos favoritos -->
+		<div class="form-group">
+		  <label class="col-md-4 control-label" for="checkboxes">Seleccione sus productos favoritos</label>
+		  <div class="col-md-4">
+		  <div ng-repeat="producto in productos" class="checkbox">
+		    <label for="checkboxes-0">
+		      <input type="checkbox" ng-model="encuestaForm.prodfav[$index]" ng-true-value="{{producto.idProducto}}">
+		      {{producto.nombre}}
+		    </label>
+			</div>
+		  </div>
+		</div>
+
+		<!-- motivo entero local -->
+		<div class="form-group">
+		  <label class="col-md-4 control-label" for="">¿Como se entero de nuestro local?</label>  
+		  <div class="col-md-4">
+		  <input ng-model="encuestaForm.motivo" placeholder="motivo..." class="form-control input-md" required>
+		    
+		  </div>
+		</div>
+
+		<!-- Opinion -->
+		<div class="form-group">
+		  <label class="col-md-4 control-label" for="">Dejenos su opinion o sugerencia</label>
+		  <div class="col-md-4">                     
+		    <textarea class="form-control" ng-model="encuestaForm.opinion" required>Su opinion aqui</textarea>
+		  </div>
+		</div>
+
+		<!-- Volver -->
+		<div class="form-group">
+		  <label class="col-md-4 control-label" for="">¿Volveria a ordenar en este local?</label>
+		  <div class="col-md-4">
+		    <select ng-model="encuestaForm.volver" class="form-control" required>
+		      <option value="1">Si</option>
+		      <option value="2">No</option>
+		      <option value="3">Tal vez</option>
+		    </select>
+		  </div>
+		</div>
+
+		<!-- Button (Double) -->
+		<div class="form-group">
+		  <label class="col-md-4 control-label" for=""></label>
+		  <div class="col-md-8">
+		    <button ng-disabled="encForm.$invalid" ng-click="altaEnc(encuestaForm)" class="btn btn-success">Enviar</button>
+		    <button class="btn btn-default" data-dismiss="modal" class="btn btn-inverse">No gracias</button>
+		  </div>
+		</div>
+
+	</fieldset>
+	</form>
+
+
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+
+  </div>
+</div>
+
+	</div>
+

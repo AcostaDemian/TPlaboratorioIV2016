@@ -1,0 +1,29 @@
+				
+				<h2>Alta local</h2>
+
+				<form name="formAlta" class="tablas" enctype="multipart/form-data">
+			  	<div class="row">
+
+				<div class="row">
+
+				<span> Nombre </span>
+				<input type="text" name="dni" ng-model="local.nombre" placeholder="ingrese nombre" required />
+				</div>
+
+				<div class="row">
+				<span> Direccion </span>
+				<input type="text" ng-model="local.direccion" required> 
+				</div>
+
+				<div class="row">
+				<span> Telefono </span>
+				<input type="tel" ng-model="local.tel" required> 
+				</div>
+				
+				<a class="btn btn-warning" name="guardar" ng-disabled="formAlta.$invalid" 
+				ng-click="altaLocal(local)" ><span class="glyphicon glyphicon-save">&nbsp;</span>crear local!</a>
+					
+				</div>
+			</div>
+
+			</form>

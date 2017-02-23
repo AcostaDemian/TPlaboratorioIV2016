@@ -1,0 +1,18 @@
+<nav class="navbar navbar-default"  style="background:#F9A825;border-color: #F9A825">
+  <div class="container-fluid" >
+    <div class="navbar-header">
+      <a class="navbar-brand" ui-sref="locales()">Volver a locales</a>
+    </div>
+    <ul class="nav navbar-nav" style="background:#F9A825" >
+      <li role="presentation"><a class="active" ui-sref="navbar.productos()">Productos</a></li>
+      <li role="presentation"><a ui-sref="navbar.ofertas()">Ofertas</a></li>
+      <li role="presentation"><a ui-sref="navbar.pedidos()">Pedidos</a></li>
+      <li role="presentation"><a ui-sref="navbar.usuarios()">Usuarios</a></li>
+      <li role="presentation"><a ui-sref="navbar.infoLocal()">Sobre nosotros</a></li>
+      <li role="presentation"><a>Logeado como {{acceso.nombre}}</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div ui-view name="contenido">
+</div>

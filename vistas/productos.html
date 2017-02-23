@@ -1,0 +1,68 @@
+	<div class="container">
+		<div class="page-header">
+			<center> <h1> Listado de productos</h1>   </center>     
+		</div>
+		<button onclick="$('#prodT').tableExport({type:'pdf',pdfFontSize:'30',escape:'false',ignoreColumn:[3,4]});"> PDF!</button>
+		</br>
+		<table class="table table-striped table-bordered" id="prodT" style="background-color:#f44336">
+			<tr style="background-color:#f44336">
+			    <th>DESCRIPCION</th>
+			    <th>PRECIO UNIDAD</th>
+			    <th>FOTOS</th> 
+			    <th ng-if="acceso.emp">OPCIONES</th>
+			</tr>
+			<tr ng-repeat="producto in productos" style="text-align:center;">
+
+				<td> {{producto.nombre}} </td>
+				<td> {{producto.precio}} </td>
+				<td>
+				<slider images="producto.imageArray"></slider>	 
+				</td>
+				<td ng-if="acceso.emp"> 
+				<button class="btn btn-danger" style="width: 250px;" ng-click="eliminarProd(producto.idProducto)"> Borrar </button>
+				</p>
+				<button class="btn btn-warning" style="width: 250px;" ng-click="modoMod(producto)">Modificar</button>
+				</td>	
+			</tr>			 
+		</table>
+
+		<div ng-if="acceso.emp" >
+			<div class="page-header" >
+			<center> <h1> {{tituloForm}}</h1>   </center>     
+			</div>
+
+				<form name="formAlta" class="tablas" enctype="multipart/form-data" style="background:#f44336;color:black">
+			  	<div class="row" style="text-align:center;">
+
+				<div class="row">
+
+				<span> Nombre </span>
+				<input type="text" name="dni" ng-model="productoForm.nombre" required/>
+				</div>
+
+				<div class="row">
+				<span> Precio </span>
+				<input type="number" numericbinding ng-model="productoForm.precio" required> 
+				</div>
+				<div class="row">
+					<span>Fotos</span>
+				<ul>
+					 <input type="file" nv-file-select uploader="uploader" filters="filtroLoco" multiple/>
+			        <li ng-repeat="item in uploader.queue">
+			           
+			            <div ng-show="uploader.isHTML5" ng-thumb="{ file: item._file, height: 100 }"></div>
+
+			            <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+			                <span class="glyphicon glyphicon-trash"></span> Remove
+			            </button>
+			        </li>       
+			    </ul>
+				</div>
+				
+			<button class="btn btn-warning" name="guardar" ng-disabled="formAlta.$invalid || uploader.queue.length != 3" 
+				ng-click="altaMod(productoForm)" ><span class="glyphicon glyphicon-save">&nbsp;</span>Cargar producto!</button>
+					
+			</div>
+			</div>
+			</form>	
+		</div>
